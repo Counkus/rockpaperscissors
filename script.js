@@ -34,6 +34,10 @@ class Emoji {
 	draw(context) {
 		context.drawImage(this.image, this.x, this.y, this.width, this.height);
 	}
+	update() {
+		this.y += this.speedY;
+		this.x += this.speedX;
+	}
 }
 
 class Scissor extends Emoji {
@@ -42,10 +46,6 @@ class Scissor extends Emoji {
 		this.image = sciccorImage;
 		this.x = Math.random() * canvas.width;
 		this.y = Math.random() * canvas.height;
-	}
-	update() {
-		this.y += this.speedY;
-		this.x += this.speedX;
 	}
 }
 
@@ -56,10 +56,6 @@ class Rock extends Emoji {
 		this.x = Math.random() * canvas.width;
 		this.y = Math.random() * canvas.height;
 	}
-	update() {
-		this.y += this.speedY;
-		this.x += this.speedX;
-	}
 }
 
 class Paper extends Emoji {
@@ -68,10 +64,6 @@ class Paper extends Emoji {
 		this.image = paperImage;
 		this.x = Math.random() * canvas.width;
 		this.y = Math.random() * canvas.height;
-	}
-	update() {
-		this.y += this.speedY;
-		this.x += this.speedX;
 	}
 }
 class UI {
@@ -90,9 +82,9 @@ class Game {
 		this.scissors = [];
 		this.rocks = [];
 		this.papers = [];
-		this.numberOfScissors = 3;
-		this.numberOfRocks = 3;
-		this.numberOfPapers = 3;
+		this.numberOfScissors = 4;
+		this.numberOfRocks = 4;
+		this.numberOfPapers = 4;
 		this.speedMult = 0.5;
 		for (let i = 0; i < this.numberOfScissors; i++) {
 			this.scissors.push(new Scissor());
@@ -112,9 +104,9 @@ class Game {
 			this.rocks.forEach((rock) => {
 				if (this.checkCollision(rock, scissor)) {
 					scissor.markedForDeletion = true;
-                    // this.rocks.push(new Rock());
-                    // this.rocks[this.rocks.length -1].x = scissor.x
-                    // this.rocks[this.rocks.length -1].y = scissor.y
+                    this.rocks.push(new Rock());
+                    this.rocks[this.rocks.length -1].x = scissor.x
+                    this.rocks[this.rocks.length -1].y = scissor.y
                     // this.rocks = this.rocks.filter((rock) => !rock.markedForDeletion);
 				}
 			});
@@ -125,9 +117,9 @@ class Game {
 			this.papers.forEach((paper) => {
 				if (this.checkCollision(rock, paper)) {
 					rock.markedForDeletion = true;
-                    // this.papers.push(new Paper());
-                    // this.papers[this.papers.length -1].x = rock.x
-                    // this.papers[this.papers.length -1].y = rock.y
+                    this.papers.push(new Paper());
+                    this.papers[this.papers.length -1].x = rock.x
+                    this.papers[this.papers.length -1].y = rock.y
                     // this.papers = this.papers.filter((paper) => !paper.markedForDeletion);
 				}
 			});
@@ -138,13 +130,19 @@ class Game {
 			this.scissors.forEach((scissor) => {
 				if (this.checkCollision(paper, scissor)) {
 					paper.markedForDeletion = true;
-                    // this.scissors.push(new Scissor());
-                    // this.scissors[this.scissors.length -1].x = paper.x
-                    // this.scissors[this.scissors.length -1].y = paper.y
+                    this.scissors.push(new Scissor());
+                    this.scissors[this.scissors.length -1].x = paper.x
+                    this.scissors[this.scissors.length -1].y = paper.y
                     // this.scissors = this.scissors.filter((scissor) => !scissor.markedForDeletion);
 				}
 			});
 		});
+		
+		this.scissors = this.scissors.filter((scissor) => !scissor.markedForDeletion);
+		this.rocks = this.rocks.filter((rock) => !rock.markedForDeletion);
+		this.papers = this.papers.filter((paper) => !paper.markedForDeletion);
+	}
+	chase() {
 		//Rock Chase Scissors
 		if (this.scissors.length > 0) {
 			this.rocks.forEach((rock) => {
@@ -241,10 +239,6 @@ class Game {
 				scissor.speedY = 0;
 			});
 		}
-
-		this.scissors = this.scissors.filter((scissor) => !scissor.markedForDeletion);
-		this.rocks = this.rocks.filter((rock) => !rock.markedForDeletion);
-		this.papers = this.papers.filter((paper) => !paper.markedForDeletion);
 	}
 	draw(context) {
 		this.ui.draw(context);
@@ -275,6 +269,7 @@ function animate() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	game.draw(ctx);
 	game.update();
+	game.chase();
 	requestAnimationFrame(animate);
 }
 
