@@ -31,11 +31,13 @@ class Emoji {
 		this.speedY = 0;
 		this.markedForDeletion = false;
 		this.targetLocked = false;
+		this.x = Math.random() * canvas.width;
+		this.y = Math.random() * canvas.height;
 	}
 	draw(context) {
-		context.drawImage(this.image, this.x, this.y, this.width, this.height);
+		context.drawImage(this.image, this.x, this.y);
 	}
-	update() {
+	move() {
 		this.y += this.speedY;
 		this.x += this.speedX;
 	}
@@ -45,8 +47,6 @@ class Scissor extends Emoji {
 	constructor(game) {
 		super(game);
 		this.image = sciccorImage;
-		this.x = Math.random() * canvas.width;
-		this.y = Math.random() * canvas.height;
 	}
 }
 
@@ -54,8 +54,6 @@ class Rock extends Emoji {
 	constructor(game) {
 		super(game);
 		this.image = rockImage;
-		this.x = Math.random() * canvas.width;
-		this.y = Math.random() * canvas.height;
 	}
 }
 
@@ -63,8 +61,6 @@ class Paper extends Emoji {
 	constructor(game) {
 		super(game);
 		this.image = paperImage;
-		this.x = Math.random() * canvas.width;
-		this.y = Math.random() * canvas.height;
 	}
 }
 class UI {
@@ -76,9 +72,7 @@ class UI {
 	}
 }
 class Game {
-	constructor(width, height) {
-		this.width = width;
-		this.height = height;
+	constructor() {
 		this.scissors = [];
 		this.rocks = [];
 		this.papers = [];
@@ -157,7 +151,7 @@ class Game {
 	}
 	BeatsLogic(attackerArray, defenderArray, attackerSpawnObject){
 		defenderArray.forEach((defender) => {
-			defender.update();
+			//defender.move();
 			attackerArray.forEach((attacker) => {
 				if (this.checkCollision(attacker,defender)) {
 					defender.markedForDeletion = true;
@@ -194,13 +188,14 @@ class Game {
 						attacker.speedY = Math.random() * -this.speedMult;
 					} else {
 						attacker.speedY = Math.random() * this.speedMult;
-					}		
+					}
+					attacker.move();		
 			});
 		}
 	}
 }
 
-const game = new Game(canvas.width, canvas.height);
+const game = new Game();
 
 //Animation Loop
 function animate() {
@@ -208,7 +203,6 @@ function animate() {
 	game.draw(ctx);
 	game.chase();
 	game.update();
-	
 	requestAnimationFrame(animate);
 }
 
