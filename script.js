@@ -2,9 +2,9 @@
 
 //Canvas Required Variables
 
-const canvas = document.getElementById("canvas1");
+const canvas = document.getElementById("canvasScreen");
 const ctx = canvas.getContext("2d");
-canvas.width = 1000;
+canvas.width = 800;
 canvas.height = 600;
 
 //Emoji global variables
@@ -19,6 +19,7 @@ rockImage.src = "rock_small.png";
 //Paper Variables
 const paperImage = new Image();
 paperImage.src = "paper_small.png";
+
 
 //Classes
 //Parent Class
@@ -76,9 +77,9 @@ class Game {
 		this.scissors = [];
 		this.rocks = [];
 		this.papers = [];
-		this.numberOfScissors = 6;
-		this.numberOfRocks = 6;
-		this.numberOfPapers = 6;
+		this.numberOfScissors = 1;
+		this.numberOfRocks = 1;
+		this.numberOfPapers = 1;
 		this.speedMult = 0.5;
 		for (let i = 0; i < this.numberOfScissors; i++) {
 			this.scissors.push(new Scissor());
@@ -196,14 +197,27 @@ class Game {
 }
 
 const game = new Game();
+var isChecked = document.getElementById("checkbox").checked;
 
 //Animation Loop
 function animate() {
+	//console.log(isChecked);
+	if (isChecked){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	game.draw(ctx);
 	game.chase();
 	game.update();
 	requestAnimationFrame(animate);
+	} else {
+		return;
+	}
+}
+
+function handleClick() {
+	isChecked = document.getElementById("checkbox").checked;
+	requestAnimationFrame(animate);
 }
 
 animate();
+
+
